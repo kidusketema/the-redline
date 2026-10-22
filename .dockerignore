@@ -1,0 +1,15 @@
+.git
+.claude
+notes
+test
+docs
+examples
+cli
+skills
+site/node_modules
+site/.wrangler
+site/wrangler.jsonc
+site/.dev.vars
+site/.vercel
+site/.netlify
+*.log

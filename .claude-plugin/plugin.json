@@ -1,0 +1,18 @@
+{
+  "name": "redline",
+  "description": "Publish what Claude makes to your own private review site, then read back every comment, pen mark and decision. Works on an iPad with Apple Pencil.",
+  "author": {
+    "name": "Kidus Ketema",
+    "url": "https://github.com/kidusketema"
+  },
+  "homepage": "https://github.com/kidusketema/the-redline",
+  "repository": "https://github.com/kidusketema/the-redline",
+  "license": "MIT",
+  "keywords": [
+    "review",
+    "feedback",
+    "markup",
+    "apple-pencil",
+    "cloudflare"
+  ]
+}

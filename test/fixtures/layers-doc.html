@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Moving the nightly report to the new queue</title>
+<style>
+  body{font:17px/1.6 Georgia,"Times New Roman",serif;color:#222;background:#fbfaf7;margin:0;padding:32px 20px 120px}
+  main{max-width:720px;margin:0 auto}
+  h1{font:700 30px/1.2 system-ui,sans-serif;margin:0 0 6px}
+  h2{font:650 22px/1.3 system-ui,sans-serif;margin:40px 0 8px}
+  .meta{color:#666;font:14px system-ui,sans-serif;margin-bottom:28px}
+  table{border-collapse:collapse;width:100%;font:15px system-ui,sans-serif;margin:16px 0}
+  th,td{border:1px solid #ddd;padding:8px 10px;text-align:left}
+  th{background:#f0eee8}
+  figure{margin:24px 0}
+  figcaption{font:14px system-ui,sans-serif;color:#555;margin-top:6px}
+  svg{max-width:100%;height:auto}
+  img{max-width:100%;height:auto;display:block;border:1px solid #ddd}
+  section{margin:28px 0}
+  code{font:15px ui-monospace,Menlo,monospace;background:#efede6;padding:1px 4px;border-radius:3px}
+</style>
+</head>
+<body>
+<main>
+<h1>Moving the nightly report to the new queue</h1>
+<p class="meta">Plan v2 &middot; written for review</p>
+
+<p>The nightly report is built by a single script that reads every order from the database, formats it, and emails a summary at six in the morning. It works, but it takes forty minutes and fails quietly when the database is slow. This plan moves the work onto the job queue we already run for invoices.</p>
+
+<h2>What changes</h2>
+<p>Three things move. The script is split into small jobs, one per region. Each job writes its result to a table instead of building the email in memory. A last job collects the rows and sends the email once every region has reported.</p>
+<ul>
+  <li>Each region runs as its own job, so one slow region no longer holds up the rest.</li>
+  <li>Failed jobs retry three times and then raise an alert to the on-call channel.</li>
+  <li>The email is sent by one job that waits for all regions, with a ten minute limit.</li>
+</ul>
+
+<figure>
+  <svg viewBox="0 0 640 220" width="640" height="220" role="img" aria-label="How the report flows">
+    <rect x="10" y="80" width="130" height="60" rx="8" fill="#e8f0fe" stroke="#4a6fb5"/>
+    <text x="75" y="115" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15">Scheduler</text>
+    <rect x="260" y="20" width="130" height="50" rx="8" fill="#e6f4ea" stroke="#3d8a55"/>
+    <text x="325" y="50" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15">Region job: North</text>
+    <rect x="260" y="85" width="130" height="50" rx="8" fill="#e6f4ea" stroke="#3d8a55"/>
+    <text x="325" y="115" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15">Region job: South</text>
+    <rect x="260" y="150" width="130" height="50" rx="8" fill="#e6f4ea" stroke="#3d8a55"/>
+    <text x="325" y="180" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15">Region job: West</text>
+    <rect x="500" y="80" width="130" height="60" rx="8" fill="#fce8e6" stroke="#b5483d"/>
+    <text x="565" y="115" text-anchor="middle" font-family="system-ui,sans-serif" font-size="15">Send email</text>
+    <path d="M140 110 L260 45 M140 110 L260 110 M140 110 L260 175 M390 45 L500 105 M390 110 L500 110 M390 175 L500 115" stroke="#666" stroke-width="2" fill="none"/>
+  </svg>
+  <figcaption>The report flow. The scheduler starts one job per region, and the email job waits for all of them.</figcaption>
+</figure>
+
+<section data-redline-decision="approach">
+  <h2>The approach</h2>
+  <p>We keep the same report layout and the same recipients. Only the plumbing changes. The old script stays in place for one week behind a switch, so we can fall back by changing a single setting.</p>
+  <table>
+    <thead><tr><th>Step</th><th>Owner</th><th>When</th></tr></thead>
+    <tbody>
+      <tr><td>Split the script into region jobs</td><td>Dana</td><td>Week 1</td></tr>
+      <tr><td>Write results to the report table</td><td>Dana</td><td>Week 1</td></tr>
+      <tr><td>Add the collecting email job</td><td>Marco</td><td>Week 2</td></tr>
+      <tr><td>Run both versions side by side</td><td>Marco</td><td>Week 3</td></tr>
+    </tbody>
+  </table>
+</section>
+
+<h2>What it should look like</h2>
+<p>The email keeps its current look. Here is the header image it uses, drawn as a placeholder.</p>
+<img alt="Report header placeholder" width="640" height="120" src="data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='120' viewBox='0 0 640 120'%3E%3Crect width='640' height='120' fill='%23eee9dc'/%3E%3Crect x='24' y='28' width='180' height='16' fill='%23b8b09a'/%3E%3Crect x='24' y='58' width='320' height='10' fill='%23d3cdbb'/%3E%3Crect x='24' y='78' width='260' height='10' fill='%23d3cdbb'/%3E%3Ccircle cx='570' cy='60' r='34' fill='%23d7262e'/%3E%3C/svg%3E">
+
+<section data-redline-decision="rollout">
+  <h2>The rollout</h2>
+  <p>In week three both versions send an email, and we compare the numbers by hand every morning. If the totals match for five days in a row, we turn the old script off. If they do not match, we stay on the old script and fix the difference first.</p>
+  <p>The switch back takes about a minute: set <code>REPORT_MODE=legacy</code> and the scheduler ignores the new jobs.</p>
+</section>
+
+<h2>Open questions</h2>
+<p>Do we want the on-call alert for a single failed region, or only when two or more fail? A single failure is usually a slow database and clears on retry.</p>
+</main>
+</body>
+</html>

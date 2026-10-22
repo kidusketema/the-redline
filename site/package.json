@@ -1,0 +1,23 @@
+{
+  "name": "the-redline-site",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "The Redline review site. One fetch handler that runs as a Cloudflare Worker, a Node server, a Vercel function or a Netlify function.",
+  "engines": {
+    "node": ">=22.13"
+  },
+  "scripts": {
+    "start": "node node/server.mjs",
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "postgres": "^3.4.9"
+  },
+  "devDependencies": {
+    "@electric-sql/pglite": "^0.5.11",
+    "@electric-sql/pglite-socket": "^0.2.14",
+    "wrangler": "4.136.1"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "name": "the-redline",
+  "description": "Review what Claude makes on any device: publish to your own private site, then read back comments, pen marks and decisions.",
+  "owner": {
+    "name": "kidusketema",
+    "url": "https://github.com/kidusketema"
+  },
+  "plugins": [
+    {
+      "name": "redline",
+      "source": "./",
+      "description": "Publish what Claude makes to your own private review site, then read back every comment, pen mark and decision."
+    }
+  ]
+}

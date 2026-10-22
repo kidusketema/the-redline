@@ -1,0 +1,9 @@
+node_modules/
+.wrangler/
+.dev.vars
+*.log
+.DS_Store
+site/wrangler.jsonc
+test/.tmp/
+notes/
+.claude/

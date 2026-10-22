@@ -1,0 +1,13 @@
+# The Redline on Netlify. Static files come from public/ (its _headers file is Netlify's own format);
+# everything else goes to the function in netlify/functions/redline.mjs, which sets its own path.
+[build]
+  publish = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Wrangler is only for Cloudflare. Leave it out of a Netlify build.
+  NPM_FLAGS = "--omit=dev"
+
+[functions]
+  node_bundler = "esbuild"

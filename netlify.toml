@@ -1,0 +1,10 @@
+# For the "Deploy to Netlify" button, which reads this file at the top of the repository.
+# The site itself is in site/ and has its own netlify.toml.
+[build]
+  base = "site"
+  publish = "public"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+  NPM_FLAGS = "--omit=dev"

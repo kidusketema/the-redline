@@ -1,0 +1,235 @@
+/* The Redline page layers: comments, pen, decisions, Download PDF. Every rule is scoped to an rl- class, so the host page is left alone. */
+:root{
+  --rl-font:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  --rl-bg:#ffffff; --rl-bg2:#f3f2ee; --rl-ink:#1d2125; --rl-muted:#5f676d; --rl-line:#d8d5ce;
+  --rl-accent:#d7262e; --rl-accent-ink:#ffffff; --rl-danger:#a8321f;
+  --rl-hl:rgba(255,196,0,.34); --rl-hl-line:rgba(190,130,0,.85); --rl-hl-flash:rgba(255,160,0,.7);
+  --rl-svghl:#ffd45e; --rl-svghl-pend:#f3a6a9; --rl-svghl-flash:#ff9f1a;
+  --rl-radius:14px;
+  --rl-shadow:0 10px 32px rgba(0,0,0,.20), 0 1px 3px rgba(0,0,0,.12);
+  --rl-shadow-pill:0 4px 14px rgba(0,0,0,.16), 0 1px 3px rgba(0,0,0,.12);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --rl-bg:#1f2326; --rl-bg2:#2a2f33; --rl-ink:#e8e6e1; --rl-muted:#a3abb0; --rl-line:#3b4146;
+  --rl-accent:#ff6f76; --rl-accent-ink:#2a0b0d; --rl-danger:#ff9b86;
+  --rl-hl:rgba(255,210,70,.28); --rl-hl-line:rgba(255,210,70,.8); --rl-hl-flash:rgba(255,190,40,.6);
+  --rl-svghl:#a67f10; --rl-svghl-pend:#9c3b41; --rl-svghl-flash:#cc7a00;
+  --rl-shadow:0 10px 32px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.4);
+  --rl-shadow-pill:0 4px 14px rgba(0,0,0,.45), 0 1px 3px rgba(0,0,0,.35);
+}}
+:root[data-theme="dark"]{
+  --rl-bg:#1f2326; --rl-bg2:#2a2f33; --rl-ink:#e8e6e1; --rl-muted:#a3abb0; --rl-line:#3b4146;
+  --rl-accent:#ff6f76; --rl-accent-ink:#2a0b0d; --rl-danger:#ff9b86;
+  --rl-hl:rgba(255,210,70,.28); --rl-hl-line:rgba(255,210,70,.8); --rl-hl-flash:rgba(255,190,40,.6);
+  --rl-svghl:#a67f10; --rl-svghl-pend:#9c3b41; --rl-svghl-flash:#cc7a00;
+  --rl-shadow:0 10px 32px rgba(0,0,0,.55), 0 1px 3px rgba(0,0,0,.4);
+  --rl-shadow-pill:0 4px 14px rgba(0,0,0,.45), 0 1px 3px rgba(0,0,0,.35);
+}
+
+/* highlights in the document */
+mark.rl-hl{background:var(--rl-hl);color:inherit;border-radius:2px;box-shadow:inset 0 -2px 0 var(--rl-hl-line);cursor:pointer;padding:0;transition:background .3s}
+mark.rl-hl.rl-pending{cursor:default;box-shadow:inset 0 -2px 0 var(--rl-accent)}
+mark.rl-hl.rl-flash{background:var(--rl-hl-flash)}
+/* highlighted text inside a diagram: a marker-pen halo behind the letters (scales with the diagram) */
+tspan.rl-hl{paint-order:stroke fill;stroke:var(--rl-svghl);stroke-width:8px;stroke-linejoin:round;stroke-linecap:round;cursor:pointer}
+tspan.rl-hl.rl-pending{stroke:var(--rl-svghl-pend);cursor:default}
+tspan.rl-hl.rl-flash{stroke:var(--rl-svghl-flash)}
+
+/* shared base: .rl elements ignore the host page's styles */
+.rl{all:initial;box-sizing:border-box;font:14px/1.45 var(--rl-font);color:var(--rl-ink);z-index:2147483000;-webkit-text-size-adjust:100%;text-align:left}
+.rl *,.rl *::before,.rl *::after{box-sizing:border-box}
+.rl p,.rl h2,.rl blockquote,.rl ul{margin:0;padding:0}
+.rl details,.rl summary{border:0;background:none;box-shadow:none;border-radius:0;margin:0;padding:0;color:inherit;font:inherit;letter-spacing:normal;text-transform:none}
+.rl details{display:block}
+.rl summary{display:list-item}
+.rl[hidden]{display:none!important}
+.rl button{font:inherit;color:inherit;cursor:pointer;border:1px solid var(--rl-line);background:var(--rl-bg);border-radius:8px;padding:5px 11px;line-height:1.3;-webkit-appearance:none;appearance:none;touch-action:manipulation}
+.rl button:hover{background:var(--rl-bg2)}
+.rl button:focus-visible,.rl textarea:focus-visible,.rl input:focus-visible,.rl.rl-tab:focus-visible,.rl.rl-pdf:focus-visible,.rl-ink-ui button:focus-visible,.rl-ink-pal button:focus-visible{outline:2px solid var(--rl-accent);outline-offset:1px}
+.rl button.rl-primary{background:var(--rl-accent);color:var(--rl-accent-ink);border-color:var(--rl-accent);font-weight:600}
+.rl button.rl-primary:hover{filter:brightness(1.08);background:var(--rl-accent)}
+.rl button.rl-primary[disabled]{opacity:.55;cursor:default}
+.rl button.rl-link{border:0;background:none;padding:2px 4px;color:var(--rl-accent);border-radius:4px}
+.rl button.rl-link:hover{background:none;text-decoration:underline}
+.rl textarea,.rl input{font-size:16px;line-height:1.4;font-family:inherit;color:var(--rl-ink);background:var(--rl-bg);border:1px solid var(--rl-line);border-radius:8px;padding:8px 10px;width:100%;margin:0;display:block;-webkit-appearance:none;appearance:none}
+.rl textarea{resize:vertical;min-height:76px}
+.rl ::placeholder{color:var(--rl-muted);opacity:.85}
+
+/* corner controls: one pill look for Comments, Download PDF and the pen toolbar */
+.rl.rl-tab,.rl.rl-pdf,.rl-ink-ui button,.rl-ink-pal button{-webkit-appearance:none;appearance:none;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-width:42px;height:42px;padding:0 14px;border-radius:999px;border:1px solid var(--rl-line);background:var(--rl-bg);color:var(--rl-ink);
+  font:600 14px/1.2 var(--rl-font);letter-spacing:normal;text-transform:none;touch-action:manipulation;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.rl.rl-tab,.rl.rl-pdf,.rl-ink-ui button{box-shadow:var(--rl-shadow-pill)}
+.rl.rl-tab:hover,.rl.rl-pdf:hover,.rl-ink-ui button:hover,.rl-ink-pal button:hover{background:var(--rl-bg2)}
+.rl.rl-tab svg,.rl.rl-pdf svg,.rl-ink-icon svg{flex:none;width:15px;height:15px}
+
+/* Comments tab (bottom right, under the pen toolbar) */
+.rl.rl-tab{position:fixed;right:16px;bottom:16px}
+.rl.rl-tab svg{fill:currentColor}
+.rl.rl-tab .rl-count{display:inline-block;min-width:20px;padding:0 6px;border-radius:999px;background:var(--rl-accent);color:var(--rl-accent-ink);font-size:12px;line-height:20px;text-align:center}
+.rl.rl-tab .rl-count[data-n="0"]{background:var(--rl-bg2);color:var(--rl-muted)}
+
+/* Download PDF (bottom left). It sits under the comments panel when that is a bottom sheet. */
+.rl.rl-pdf{position:fixed;left:16px;bottom:16px;z-index:2147482900}
+.rl.rl-pdf svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* floating "Comment" button next to a selection */
+.rl.rl-selbtn{cursor:pointer;position:absolute;display:none;padding:7px 13px 7px 11px;border-radius:999px;background:var(--rl-accent);color:var(--rl-accent-ink);border:0;font-weight:600;box-shadow:var(--rl-shadow-pill);white-space:nowrap;-webkit-user-select:none;user-select:none}
+.rl.rl-selbtn:hover{background:var(--rl-accent);filter:brightness(1.08)}
+.rl.rl-selbtn svg{width:14px;height:14px;vertical-align:-2px;margin-right:6px;fill:currentColor}
+
+/* side panel */
+.rl.rl-panel{position:fixed;top:12px;right:12px;bottom:12px;width:min(372px,calc(100vw - 24px));display:none;flex-direction:column;background:var(--rl-bg);border:1px solid var(--rl-line);border-radius:var(--rl-radius);box-shadow:var(--rl-shadow);overflow:hidden}
+.rl.rl-panel.is-open{display:flex}
+.rl-panel .rl-head{display:flex;align-items:center;padding:12px 14px;border-bottom:1px solid var(--rl-line);background:var(--rl-bg2)}
+.rl-panel .rl-head h2{font-size:15px;font-weight:700;flex:1;color:var(--rl-ink)}
+.rl-panel .rl-head .rl-sub{color:var(--rl-muted);font-weight:400;margin-left:6px}
+.rl-panel .rl-scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:12px 14px 16px}
+.rl-panel .rl-general{padding-bottom:12px;border-bottom:1px solid var(--rl-line);margin-bottom:6px}
+.rl-panel .rl-general label{display:block;font-weight:600;margin-bottom:6px}
+.rl-row{display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.rl-row .rl-btns{display:flex}
+.rl-row .rl-btns>*+*{margin-left:8px}
+.rl-who{color:var(--rl-muted);font-size:13px}
+.rl-who input{display:inline-block;width:150px;font-size:16px;padding:5px 8px}
+.rl-err{color:var(--rl-danger);font-size:13px;margin-top:6px}
+.rl-sec{font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--rl-muted);margin:14px 0 6px}
+.rl p.rl-empty{color:var(--rl-muted);padding:10px 0}
+.rl-card{border:1px solid var(--rl-line);border-radius:10px;padding:10px 12px;margin-bottom:8px;background:var(--rl-bg);transition:box-shadow .3s,border-color .3s}
+.rl-card.is-flash{border-color:var(--rl-accent);box-shadow:0 0 0 2px var(--rl-accent)}
+.rl-card.is-resolved{opacity:.72;background:var(--rl-bg2)}
+.rl-meta{color:var(--rl-muted);font-size:12.5px;margin-bottom:4px}
+.rl-meta b{color:var(--rl-ink);font-weight:600}
+.rl blockquote.rl-quote{border-left:3px solid var(--rl-hl-line);padding:1px 0 1px 9px;margin:4px 0 6px;color:var(--rl-muted);font-style:italic;font-size:13px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;word-break:break-word}
+.rl blockquote.rl-quote.is-missing{border-left-color:var(--rl-danger)}
+.rl-text{white-space:pre-wrap;word-wrap:break-word;overflow-wrap:anywhere}
+.rl-acts{display:flex;margin-top:8px}
+.rl-acts>*+*{margin-left:6px}
+.rl-acts button{font-size:13px;padding:3px 9px}
+.rl-resolved>summary{cursor:pointer;color:var(--rl-muted);font-size:13px;margin:12px 0 8px}
+
+/* pins on diagrams and pictures */
+.rl.rl-pin{cursor:pointer;position:absolute;display:none;width:26px;height:26px;margin:-13px 0 0 -13px;padding:0;border-radius:50%;background:var(--rl-accent);color:var(--rl-accent-ink);border:2px solid var(--rl-bg);box-shadow:0 2px 8px rgba(0,0,0,.4);font-weight:700;font-size:13px;line-height:22px;text-align:center;z-index:2147482000;touch-action:manipulation}
+.rl.rl-pin::after{content:"";position:absolute;top:-9px;left:-9px;right:-9px;bottom:-9px}
+.rl.rl-pin.is-preview{width:22px;height:22px;margin:-11px 0 0 -11px;background:transparent;border:2px dashed var(--rl-accent);box-shadow:0 0 0 2px var(--rl-bg);pointer-events:none}
+.rl.rl-pin.is-preview.is-pending{background:var(--rl-hl);border:2px solid var(--rl-accent)}
+.rl.rl-pin.is-flash{animation:rl-pulse .6s ease-in-out 3}
+@keyframes rl-pulse{50%{transform:scale(1.4)}}
+.rl-badge{display:inline-block;padding:0 7px;margin-right:6px;border-radius:999px;background:var(--rl-accent);color:var(--rl-accent-ink);font-size:12px;font-weight:700;line-height:18px}
+.rl blockquote.rl-quote.is-pin{font-style:normal;border-left-color:var(--rl-accent)}
+.rl-pinhead{display:flex;align-items:center;font-weight:600;margin-bottom:8px}
+.rl-pinhead svg{flex:none;width:15px;height:15px;margin-right:7px;fill:var(--rl-accent)}
+.rl p.rl-hint{color:var(--rl-muted);font-size:13px;margin-bottom:10px}
+
+/* composer (note on a selection) and toast */
+.rl.rl-composer{position:absolute;background:var(--rl-bg);border:1px solid var(--rl-line);border-radius:12px;box-shadow:var(--rl-shadow);padding:12px}
+.rl-composer blockquote.rl-quote{margin-top:0}
+.rl.rl-toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:var(--rl-ink);color:var(--rl-bg);padding:8px 14px;border-radius:999px;box-shadow:var(--rl-shadow-pill);font-size:13px}
+
+/* pen layer: Apple Pencil, pen or mouse draws; fingers still scroll */
+.rl-ink-svg{position:absolute;left:0;top:0;width:1px;height:1px;overflow:visible;pointer-events:none;z-index:2147483000}
+.rl-ink-svg path{fill:none;stroke-linecap:round;stroke-linejoin:round}
+.rl-ink-svg path.rl-ink-hl{mix-blend-mode:multiply}
+.rl-ink-svg path.rl-ink-pen{stroke:none}
+.rl-ink-hover{position:absolute;left:0;top:0;z-index:2147483540;display:none;pointer-events:none;border-radius:50%;box-sizing:border-box;will-change:transform}
+.rl-ink-target{position:absolute;z-index:2147482999;display:none;pointer-events:none;border-radius:6px;outline:1.5px dashed rgba(128,128,128,.7);outline-offset:4px}
+.rl-ink-pal{position:absolute;z-index:2147483560;display:flex;width:max-content;gap:6px;padding:6px;border-radius:999px;background:var(--rl-bg);border:1px solid var(--rl-line);
+  box-shadow:var(--rl-shadow);font:600 14px/1.2 var(--rl-font);color:var(--rl-ink);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.rl-ink-pal button[aria-pressed="true"],.rl-ink-ui button[aria-pressed="true"]{outline:3px solid var(--rl-accent);outline-offset:1px}
+.rl-ink-size{display:inline-block;border-radius:50%;background:currentColor}
+.rl-ink-ui{position:fixed;right:16px;bottom:68px;z-index:2147483550;display:flex;flex-direction:row-reverse;flex-wrap:wrap-reverse;align-items:center;gap:6px;max-width:calc(100vw - 32px);
+  font:600 14px/1.2 var(--rl-font);color:var(--rl-ink);-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.rl-ink-ui button.rl-ink-main{background:var(--rl-accent);color:var(--rl-accent-ink);border-color:transparent}
+.rl-ink-ui button.rl-ink-main:hover{background:var(--rl-accent);filter:brightness(1.08)}
+.rl-ink-icon{display:inline-flex}
+.rl-ink-icon svg{fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.rl-ink-dot{display:inline-block;width:16px;height:16px;border-radius:50%;box-shadow:0 0 0 1.5px rgba(128,128,128,.65)}
+.rl-ink-ui .rl-ink-count{display:inline-block;min-width:20px;padding:0 6px;border-radius:999px;background:var(--rl-accent-ink);color:var(--rl-accent);font-size:12px;line-height:20px;text-align:center}
+.rl-ink-msg{position:fixed;right:16px;bottom:120px;z-index:2147483560;max-width:min(420px,calc(100vw - 32px));padding:8px 12px;border-radius:10px;
+  background:var(--rl-ink);color:var(--rl-bg);font:500 13.5px/1.35 var(--rl-font);box-shadow:var(--rl-shadow-pill)}
+html.rl-ink-on,html.rl-ink-on body{-webkit-user-select:none!important;user-select:none!important;-webkit-touch-callout:none!important}
+html.rl-ink-on.rl-ink-fine{cursor:crosshair}
+html.rl-ink-hidden .rl-ink-svg{display:none}
+/* beside the comments panel while it is open */
+@media (min-width:640px){html.rl-panel-open .rl-ink-ui,html.rl-panel-open .rl-ink-msg{right:calc(28px + min(372px,100vw - 24px))}}
+
+/* decisions: Approve / Reject / Not sure. Neutral colours that work on a light or a dark page. */
+.rl-dec{display:block;margin:8px 0 12px;font:14px/1.3 var(--rl-font);color:inherit;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+.rl-dec *{box-sizing:border-box}
+.rl-dec-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.rl-dec-title{font-weight:650;margin:0 0 8px}
+.rl-dec-doc{margin:36px 0 88px;padding-top:16px;border-top:1px solid rgba(128,128,128,.35)}
+.rl-dec-btn{-webkit-appearance:none;appearance:none;cursor:pointer;margin:0;font:inherit;font-size:14px;color:inherit;background:transparent;border:1px solid rgba(128,128,128,.5);border-radius:99px;padding:5px 13px;min-height:34px;line-height:1.2;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
+.rl-dec-btn::before{content:attr(data-label)}
+.rl-dec-btn:hover{background:rgba(128,128,128,.14)}
+.rl-dec-btn:focus-visible{outline:2px solid var(--rl-accent);outline-offset:2px}
+.rl-dec-btn[aria-pressed="true"]{font-weight:650;border-width:2px;padding:4px 12px}
+.rl-dec-btn[data-v="approve"][aria-pressed="true"]{background:rgba(46,160,90,.24);border-color:#2ea05a}
+.rl-dec-btn[data-v="reject"][aria-pressed="true"]{background:rgba(214,64,48,.24);border-color:#d64030}
+.rl-dec-btn[data-v="unsure"][aria-pressed="true"]{background:rgba(214,160,20,.26);border-color:#c8960c}
+.rl-dec-btn[disabled]{opacity:.6;cursor:progress}
+.rl-dec-msg{font-size:12.5px;opacity:.7;min-height:1em}
+.rl-dec-msg.err{opacity:1;color:#d64030;font-weight:600}
+.rl-dec-state{margin-top:6px;font-size:12.5px;opacity:.75}
+.rl-dec-note{display:none;margin-top:6px}
+.rl-dec.has .rl-dec-note{display:block}
+.rl-dec-note input{display:block;width:100%;max-width:560px;font:inherit;font-size:14px;color:inherit;background:transparent;border:1px solid rgba(128,128,128,.4);border-radius:8px;padding:6px 10px;min-height:34px;-webkit-user-select:text;user-select:text}
+.rl-dec-note input:focus{outline:2px solid var(--rl-accent);outline-offset:1px}
+@media (pointer:coarse){.rl-dec-btn{min-height:44px;padding:8px 16px}.rl-dec-btn[aria-pressed="true"]{padding:7px 15px}.rl-dec-note input{min-height:44px;font-size:16px}}
+@media (max-width:480px){.rl-dec-btn{flex:1 1 auto;text-align:center}}
+
+/* comment states: marked fixed (waiting for the reader), and pen marks on text that changed */
+:root{--rl-fixbg:#eaf4ee;--rl-fixline:#2c8a55;--rl-chg-new:#1e8a4c;--rl-chg-changed:#c77700;--rl-chg-newbg:rgba(30,138,76,.13);--rl-chg-changedbg:rgba(230,150,0,.16)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--rl-fixbg:#1c2e24;--rl-fixline:#59c58a;--rl-chg-new:#59c58a;--rl-chg-changed:#f0b04a;--rl-chg-newbg:rgba(89,197,138,.16);--rl-chg-changedbg:rgba(240,176,74,.18)}}
+:root[data-theme="dark"]{--rl-fixbg:#1c2e24;--rl-fixline:#59c58a;--rl-chg-new:#59c58a;--rl-chg-changed:#f0b04a;--rl-chg-newbg:rgba(89,197,138,.16);--rl-chg-changedbg:rgba(240,176,74,.18)}
+.rl-card.is-fixed{border-color:var(--rl-fixline);background:var(--rl-fixbg)}
+.rl-card.is-changed{border-color:var(--rl-chg-changed)}
+.rl-fix{margin:2px 0 4px;font-size:13px}
+.rl-fix b{color:var(--rl-fixline);font-weight:700}
+.rl-fix.is-back b{color:var(--rl-chg-changed)}
+.rl p.rl-fixnote{margin:2px 0 0;color:var(--rl-ink);font-size:13.5px}
+.rl-card.is-fixed .rl-acts button{font-size:13.5px;padding:4px 12px}
+
+/* changes: the button in the pen toolbar, the marks on the page, and the small box that says what was taken out */
+.rl-ink-ui button.rl-chg-btn[aria-pressed="true"]{background:var(--rl-chg-changedbg)}
+html.rl-chg-on .rl-chg-changed{background-color:var(--rl-chg-changedbg)!important;box-shadow:-6px 0 0 var(--rl-chg-changed)!important}
+html.rl-chg-on .rl-chg-new{background-color:var(--rl-chg-newbg)!important;box-shadow:-6px 0 0 var(--rl-chg-new)!important}
+.rl.rl-chg-box{position:fixed;right:16px;bottom:122px;width:min(330px,calc(100vw - 32px));max-height:50vh;overflow:auto;padding:12px 14px;background:var(--rl-bg);
+  border:1px solid var(--rl-line);border-radius:var(--rl-radius);box-shadow:var(--rl-shadow)}
+.rl.rl-chg-box[hidden]{display:none}
+.rl-chg-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.rl-chg-head b{font-size:14px}
+.rl p.rl-chg-tally{margin:0 0 6px;font-size:13.5px}
+.rl p.rl-chg-key{margin:0 0 4px;display:flex;gap:8px;font-size:12.5px}
+.rl-chg-sw{padding:1px 8px;border-radius:999px;border-left:5px solid}
+.rl-chg-sw.is-changed{border-color:var(--rl-chg-changed);background:var(--rl-chg-changedbg)}
+.rl-chg-sw.is-new{border-color:var(--rl-chg-new);background:var(--rl-chg-newbg)}
+.rl ul.rl-chg-list{margin:0 0 4px;padding:0 0 0 18px;font-size:13px;color:var(--rl-ink)}
+.rl ul.rl-chg-list li{margin:0 0 5px;word-break:break-word}
+.rl-chg-was{display:block;color:var(--rl-muted);font-size:12.5px}
+@media (min-width:640px){html.rl-panel-open .rl.rl-chg-box{right:calc(28px + min(372px,100vw - 24px))}}
+@media (max-width:639px){.rl.rl-chg-box{right:12px;bottom:108px}html.rl-panel-open .rl.rl-chg-box{display:none}}
+
+/* a decision given on words that have changed since */
+.rl-dec.is-stale .rl-dec-state{opacity:1;font-weight:650;color:var(--rl-chg-changed)}
+
+/* phones: panel and composer become bottom sheets, Download PDF shrinks to its icon */
+@media (max-width:639px){
+  .rl.rl-panel{top:auto;left:0;right:0;bottom:0;width:auto;max-height:68vh;border-radius:16px 16px 0 0;border-width:1px 0 0}
+  .rl-panel .rl-head{padding-top:14px}
+  .rl.rl-tab{right:12px;bottom:12px}
+  .rl.rl-pdf{left:12px;bottom:12px;padding:0}
+  .rl.rl-pdf .rl-pdf-label{display:none}
+  .rl.rl-composer{position:fixed;left:0;right:0;bottom:0;top:auto;width:auto;border-radius:16px 16px 0 0;border-width:1px 0 0;max-height:80vh;overflow-y:auto}
+  .rl-ink-ui{right:12px;bottom:60px;max-width:calc(100vw - 24px)}
+  .rl-ink-msg{right:12px;bottom:110px}
+  html.rl-panel-open .rl-ink-ui,html.rl-panel-open .rl-ink-msg{display:none}
+}
+@media (prefers-reduced-motion:reduce){mark.rl-hl,.rl-card{transition:none}}
+/* print (and the PDF the CLI makes): none of the layers show */
+@media print{
+  .rl,.rl-ink-ui,.rl-ink-msg,.rl-ink-pal,.rl-ink-svg,.rl-ink-hover,.rl-ink-target,.rl-dec{display:none!important}
+  mark.rl-hl{background:none;box-shadow:none}
+  tspan.rl-hl{stroke:none}
+  .rl-chg-changed,.rl-chg-new{background:none!important;box-shadow:none!important}
+}

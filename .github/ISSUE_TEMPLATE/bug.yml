@@ -1,0 +1,26 @@
+name: Something doesn't work
+description: A bug, an error message, or something that behaves differently from the README
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what happened instead. Paste any error message.
+    validations:
+      required: true
+  - type: input
+    id: where
+    attributes:
+      label: Where The Redline runs
+      description: Your computer, Vercel, Netlify, Cloudflare, Docker, or somewhere else
+  - type: input
+    id: device
+    attributes:
+      label: Device and browser you reviewed on
+      description: For example "iPad Pro, Safari" or "Windows laptop, Chrome"
+  - type: input
+    id: versions
+    attributes:
+      label: Versions
+      description: Output of `node --version`, your operating system, and your agent (Claude Code, Codex, ...)

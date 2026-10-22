@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Plan: a weekly digest email for Pantry Notes</title>
+<style>
+  :root {
+    --bg: #fbfaf7; --card: #ffffff; --ink: #1f2328; --muted: #5f6670; --line: #dcd8cf; --accent: #b4412c; --soft: #f3efe7;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17191c; --card: #1f2226; --ink: #e8e6e1; --muted: #a2a8b0; --line: #34383d; --accent: #f08a73; --soft: #23272b; }
+  }
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 18px/1.65 ui-serif, Georgia, "Iowan Old Style", "Times New Roman", serif;
+  }
+  main { max-width: 41rem; margin: 0 auto; padding: 40px 16px 96px; }
+  header { margin-bottom: 36px; }
+  h1 { font: 700 2rem/1.2 ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0 0 10px; letter-spacing: -0.01em; }
+  h2 { font: 650 1.3rem/1.3 ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0 0 10px; }
+  .meta { color: var(--muted); font: 0.9rem/1.5 ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif; margin: 0; }
+  section { padding: 28px 0; border-top: 1px solid var(--line); }
+  p { margin: 0 0 14px; }
+  p:last-child { margin-bottom: 0; }
+  .ask { background: var(--soft); border-left: 4px solid var(--accent); padding: 12px 16px; border-radius: 0 6px 6px 0; }
+  figure { margin: 20px 0 0; }
+  figcaption { color: var(--muted); font: 0.85rem/1.5 ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif; margin-top: 8px; }
+  svg { display: block; width: 100%; max-width: 420px; height: auto; }
+  .box { fill: var(--card); stroke: var(--line); stroke-width: 1.5; }
+  .box.first { stroke: var(--accent); }
+  .t1 { fill: var(--ink); font: 600 15px ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .t2 { fill: var(--muted); font: 13px ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  .arrow { stroke: var(--muted); stroke-width: 1.6; fill: none; }
+  .tip { fill: var(--muted); }
+  .scroll { overflow-x: auto; margin-top: 12px; }
+  table { border-collapse: collapse; width: 100%; min-width: 30rem; font: 0.92rem/1.45 ui-sans-serif, -apple-system, "Segoe UI", Roboto, sans-serif; }
+  th, td { text-align: left; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  td.num, th.num { text-align: right; white-space: nowrap; }
+  @media print { body { background: #fff; color: #000; } }
+</style>
+</head>
+<body>
+<main>
+<header>
+  <h1>Plan: a weekly digest email for Pantry Notes</h1>
+  <p class="meta">Written by Dana Ortiz for the product team, October 22. Open for comments until Friday.</p>
+</header>
+
+<section>
+  <h2>What we want to change</h2>
+  <p>In September, 41,000 people saved a recipe in Pantry Notes. Only 14,000 of them cooked one. The other 27,000 saved something, closed the app, and never came back to it.</p>
+  <p>We don't know why. Our best guess is that nothing reminds them. The app sends no email between sign-up and the day someone cancels, so a saved recipe just sits there.</p>
+  <p class="ask">Your job: tell us if this plan is worth four weeks of test time, and answer the two questions marked below.</p>
+</section>
+
+<section>
+  <h2>What we would send</h2>
+  <p>One email every Sunday, in the morning. It shows three recipes the reader saved and hasn't cooked yet. Each has a photo, the cooking time and a "Start cooking" button that opens the recipe in the app.</p>
+  <p>We pick the three with a simple rule: the ones saved most recently, skipping anything that needs an ingredient that isn't in season for that reader's region. No other content. No "popular this week" block, no ads for the paid plan.</p>
+</section>
+
+<section>
+  <h2>How it works</h2>
+  <p>A scheduled job runs every Sunday at 6 am and does all the picking. An email service we already pay for builds and sends each message. The only new piece of our own code is the job.</p>
+  <figure>
+    <svg viewBox="0 0 360 440" role="img" aria-label="Five steps from saved recipes to the app, top to bottom: saved recipes, the Sunday job, the email service, the reader's inbox, and the app.">
+      <defs>
+        <marker id="tip" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="tip" d="M0 0 L10 5 L0 10 z"/></marker>
+      </defs>
+      <rect class="box first" x="30" y="10" width="300" height="56" rx="8"/>
+      <text class="t1" x="46" y="34">Saved recipes</text><text class="t2" x="46" y="54">Already in the app's database</text>
+      <path class="arrow" d="M180 66 V98" marker-end="url(#tip)"/>
+      <text class="t2" x="192" y="87">skips anyone who unsubscribed</text>
+      <rect class="box" x="30" y="100" width="300" height="56" rx="8"/>
+      <text class="t1" x="46" y="124">Sunday job, 6 am</text><text class="t2" x="46" y="144">Picks 3 recipes for each person</text>
+      <path class="arrow" d="M180 156 V188" marker-end="url(#tip)"/>
+      <rect class="box" x="30" y="190" width="300" height="56" rx="8"/>
+      <text class="t1" x="46" y="214">Email service</text><text class="t2" x="46" y="234">Builds and sends each message</text>
+      <path class="arrow" d="M180 246 V278" marker-end="url(#tip)"/>
+      <text class="t2" x="192" y="267">arrives by 8 am their time</text>
+      <rect class="box" x="30" y="280" width="300" height="56" rx="8"/>
+      <text class="t1" x="46" y="304">Reader's inbox</text><text class="t2" x="46" y="324">Three recipes, three buttons</text>
+      <path class="arrow" d="M180 336 V368" marker-end="url(#tip)"/>
+      <rect class="box" x="30" y="370" width="300" height="56" rx="8"/>
+      <text class="t1" x="46" y="394">The app</text><text class="t2" x="46" y="414">Opens on "Start cooking"</text>
+    </svg>
+    <figcaption>Figure 1. One new job; everything else already exists.</figcaption>
+  </figure>
+</section>
+
+<section data-redline-decision="weekly-cooks">
+  <h2>Who gets it</h2>
+  <p>Roughly 36,000 people have the app installed and an active account. Most should not get the email.</p>
+  <div class="scroll">
+    <table>
+      <thead><tr><th>Group</th><th class="num">People</th><th>Gets the digest</th></tr></thead>
+      <tbody>
+        <tr><td>Saved a recipe in the last 60 days and hasn't cooked it</td><td class="num">18,000</td><td>Yes</td></tr>
+        <tr><td>Cooks something every week already</td><td class="num">9,000</td><td>Open question, see below</td></tr>
+        <tr><td>Joined in the last 7 days</td><td class="num">2,500</td><td>No, they get the welcome emails</td></tr>
+        <tr><td>Turned off all email</td><td class="num">6,500</td><td>No</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p style="margin-top:14px">Weekly cooks don't need a nudge, but they would probably like the shopping-list button. Adding them means 27,000 emails a week instead of 18,000, which is 50% more mail for a group the digest is unlikely to change.</p>
+  <p class="ask">Question 1: do weekly cooks get the digest? We lean no. Say yes if you'd rather learn what they do with it.</p>
+</section>
+
+<section>
+  <h2>How we will know it worked</h2>
+  <p>Four weeks, split in half. Half of the 18,000 get the digest and half get nothing. We compare how many in each half tap "Start cooking" on a saved recipe within seven days of the Sunday email.</p>
+  <p>We call it a win if the digest half beats the other half by 3 percentage points or more. We stop early if more than 1 in 200 people unsubscribe in a single week.</p>
+</section>
+
+<section data-redline-decision="start-date">
+  <h2>Schedule and cost</h2>
+  <p>Priya builds the job in about three days. Marcus makes the email template in two. Both finish by November 6, and we send a test to the team on November 9.</p>
+  <p>The email service charges $0.80 per 1,000 messages. At 9,000 messages a week for the digest half, that is $7.20 a week and under $30 for the whole test.</p>
+  <p>If we start on November 16, the four weeks run through Thanksgiving, when people cook more than usual. The digest could look better than it is. Starting on December 7 avoids that, but it pushes the result to the first week of January, when many people are away.</p>
+  <p class="ask">Question 2: start on November 16, or wait until December 7?</p>
+</section>
+</main>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+  // The CLI copies this to wrangler.jsonc and fills in the two placeholders.
+  "name": "__NAME__",
+  "main": "src/worker.js",
+  "compatibility_date": "2026-09-01",
+  "workers_dev": true,
+  "preview_urls": false,
+  // No run_worker_first: files that exist in ./public are served directly, everything else reaches the Worker.
+  "assets": {
+    "directory": "./public"
+  },
+  // File bodies live in Workers KV (D1 sends binary data too slowly for the free plan); D1 keeps what each file is.
+  "kv_namespaces": [
+    {
+      "binding": "FILES",
+      "id": "__KV_ID__"
+    }
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "__NAME__",
+      "database_id": "__DATABASE_ID__"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+name: Idea or request
+description: A host, an agent, or a feature you'd like
+labels: [idea]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What you'd like
+      description: What you are trying to do, and where The Redline gets in the way today.
+    validations:
+      required: true
+  - type: dropdown
+    id: help
+    attributes:
+      label: Would you like to build it?
+      options:
+        - Yes, with some pointers
+        - Maybe
+        - No, just suggesting

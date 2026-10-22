@@ -1,0 +1,18 @@
+# The Redline on Render, as a Blueprint: Render reads this file when you press "New Blueprint Instance".
+# A free Render web service has no disk, so the data goes in a Postgres database.
+# Render's own free database is deleted 30 days after it is made. For a site you keep, paste the address of a free
+# Supabase or Neon database into DATABASE_URL when Render asks for it.
+services:
+  - type: web
+    name: redline
+    runtime: docker
+    plan: free
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /robots.txt
+    envVars:
+      - key: REDLINE_PUBLISH_KEY
+        generateValue: true
+      - key: REDLINE_DASHBOARD_TOKEN
+        generateValue: true
+      - key: DATABASE_URL
+        sync: false

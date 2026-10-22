@@ -1,0 +1,63 @@
+{
+  "name": "the-redline",
+  "version": "0.1.0",
+  "description": "Review what Claude or Codex makes on any device: comment, draw with an Apple Pencil, and approve. Runs on your own computer, or on the host you already use.",
+  "private": false,
+  "type": "module",
+  "bin": {
+    "redline": "cli/redline.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "license": "MIT",
+  "author": "Kidus Ketema",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kidusketema/the-redline.git"
+  },
+  "homepage": "https://github.com/kidusketema/the-redline#readme",
+  "bugs": {
+    "url": "https://github.com/kidusketema/the-redline/issues"
+  },
+  "keywords": [
+    "claude-code",
+    "codex",
+    "review",
+    "apple-pencil",
+    "markup",
+    "markdown",
+    "vercel",
+    "netlify",
+    "cloudflare"
+  ],
+  "files": [
+    "cli",
+    "agents",
+    "skills",
+    ".claude-plugin",
+    "examples",
+    "site/package.json",
+    "site/node",
+    "site/schema*.sql",
+    "site/wrangler.template.jsonc",
+    "site/src",
+    "site/public",
+    "LICENSE",
+    "THIRD_PARTY.md",
+    "README.md",
+    "site/api",
+    "site/netlify",
+    "site/vercel.json",
+    "site/netlify.toml",
+    "site/package-lock.json",
+    "Dockerfile",
+    ".dockerignore",
+    "render.yaml",
+    "netlify.toml"
+  ],
+  "scripts": {
+    "test": "node --test test/cli.mjs test/cli-local.mjs test/adapters.mjs test/adapters-deploy.mjs",
+    "test:site": "node test/site.mjs --target sqlite && node test/site.mjs --target postgres"
+  }
+}
