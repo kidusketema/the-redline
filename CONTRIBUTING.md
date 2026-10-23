@@ -15,6 +15,16 @@ Thanks for helping. Bug reports, fixes, new hosts and support for more agents ar
 | `skills/`, `agents/` | What the agent is told: the Claude Code skills, and the same instructions for Codex and other agents |
 | `test/` | Everything below |
 
+When someone opens a page, the site adds a script that draws the comment, pen and decision tools on top. `redline feedback` reads everything back, and opens the page in Chrome to take screenshots of the pen marks.
+
+```mermaid
+flowchart LR
+  A[Your agent] -- redline publish --> S[Your Redline site]
+  S -- link --> Y[You, on any device]
+  Y -- comments, pen marks, decisions --> S
+  S -- redline feedback --> A
+```
+
 ## Running the tests
 
 You need Node.js 22.13 or newer. Run `npm install` once inside the `site` folder.
