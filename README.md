@@ -1,10 +1,20 @@
 <p align="center"><img src="docs/banner.png" alt="The Redline: your agent writes it, you mark it up, and it reads every comment, pen mark and approval" width="100%"></p>
 
-Review what your coding agent writes with comments, pen marks and approvals, on your laptop, phone or iPad. Your agent gets your exact feedback, makes the changes, and shows you what it fixed. Works with Claude Code, Codex and other coding agents.
+**The Redline lets you review the plans, specs and reports your AI coding agent writes, on your laptop, phone or iPad. Circle problems, leave comments, and approve or reject sections. Your agent reads your feedback and makes the changes.**
 
-Runs on your own computer. No account needed.
+It replaces reading a long plan in your terminal or chat and then typing out where each change goes ("in section 3, the second bullet about pricing…").
 
-<p align="center"><img src="docs/demo.gif" alt="Marking up a published plan: a text comment, a pen circle and a question mark, then Approve" width="100%"></p>
+<p align="center"><img src="docs/demo.gif" alt="Marking up a plan: a text comment, a pen circle and a question mark, then Approve" width="100%"></p>
+
+## How it works
+
+1. Ask your agent (Claude Code, Codex or another) to send a plan, spec or report for review. It gives you a link.
+2. Open the link. Highlight text to comment, draw on the page with a pen or your finger, and press Approve or Reject.
+3. Tell your agent "I left feedback". It reads every comment, pen mark and decision, makes the changes, and updates the same link so you can check each fix.
+
+Pages are served from your own computer with no sign-up, and your phone or iPad opens them over Wi-Fi. To share a page with people elsewhere, put The Redline on Vercel, Netlify, Cloudflare or your own server. It's free and open source.
+
+Unlike Claude's built-in artifacts, you can draw on the page, approve each section, and get comments from people without a Claude account ([comparison](#why-not-claudes-artifacts)).
 
 ## Who it's for
 
